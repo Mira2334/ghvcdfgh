@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Задание 1 — таймер 2 минуты</title>
+<style>
+body{font-family:Arial;background:#eef;margin:0}
+header{background:#333;color:white;padding:15px;text-align:center}
+.tab{background:white;margin:20px;padding:20px;border-radius:10px}
+.warning{color:red;font-weight:bold}
+.score{font-weight:bold;margin-top:10px}
+select{margin:5px}
+#timer{font-size:22px;font-weight:bold;color:#ff4444}
+</style>
+</head>
+<body>
+<header>
+<h1>Задание 1. Вставьте пропущенные слова</h1>
+<div id="timer">Время: 02:00</div>
+</header>
+
+<div class="tab">
+<div class="warning">Выходить с сайта нельзя, иначе ответы аннулируются</div>
+
+<p>Выберите вариант:</p>
+<select id="variant" onchange="startTest()">
+<option value="">-- выбрать --</option>
+<option value="1">Вариант 1</option>
+<option value="2">Вариант 2</option>
+</select>
+
+<div id="var1" style="display:none">
+<h3>Вариант 1</h3>
+<p>Слова для выбора: хромосомы, регенерация, плазмиды, терапевтическим, деление, устойчивости, рестриктазы, ядра, клонирование, молекулярным, лигазы, естественного</p>
+
+<p>У бактерий, помимо основной хромосомы, имеются небольшие кольцевые молекулы ДНК — <select id="a1"></select></p>
+<p>Гены устойчивости к антибиотикам, находящиеся в плазмидах, называются факторами <select id="a2"></select></p>
+<p>Процесс получения множества генетически идентичных копий одной клетки называется <select id="a3"></select></p>
+<p>Соединение фрагментов ДНК осуществляется с помощью фермента <select id="a4"></select></p>
+<p>Клонирование на уровне молекул ДНК называется <select id="a5"></select> клонированием</p>
+<p>Монозиготные близнецы у человека являются примером <select id="a6"></select> клонирования</p>
+
+<button id="check1" onclick="checkVar1()">Проверить</button>
+<div id="s1" class="score"></div>
+</div>
+
+<div id="var2" style="display:none">
+<h3>Вариант 2</h3>
+<p>Слова для выбора: рнк, бактерий, терапевтическим, ядра, регенерация, плазмид, днк, клонированием, многоклеточных, хромосомной, рестриктазы, деление</p>
+
+<p>Перенос генетической информации между бактериями возможен с помощью <select id="b1"></select></p>
+<p>Плазмиды легко отделяются от основной <select id="b2"></select> ДНК</p>
+<p>Для разрезания ДНК используют специальные ферменты — <select id="b3"></select></p>
+<p>Размножение бактерий, полученных из одной клетки, называется <select id="b4"></select></p>
+<p>Метод переноса ядра используется при клонировании <select id="b5"></select> организмов</p>
+<p>Клонирование тканей и органов в медицине называется <select id="b6"></select> клонированием</p>
+
+<button id="check2" onclick="checkVar2()">Проверить</button>
+<div id="s2" class="score"></div>
+</div>
+</div>
+
+<script>
+let time = 120;
+let started = false;
+let interval;
+let finished = false;
+
+const w1=["хромосомы","регенерация","плазмиды","терапевтическим","деление","устойчивости","рестриктазы","ядра","клонирование","молекулярным","лигазы","естественного"];
+const w2=["рнк","бактерий","терапевтическим","ядра","регенерация","плазмид","днк","клонированием","многоклеточных","хромосомной","рестриктазы","деление"];
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+shuffle(w1); shuffle(w2);
+
+function fill(id,arr){
+ let s=document.getElementById(id);
+ s.innerHTML="<option value=''>--</option>";
+ arr.forEach(w=>s.innerHTML+=`<option>${w}</option>`);
+}
+["a1","a2","a3","a4","a5","a6"].forEach(i=>fill(i,w1));
+["b1","b2","b3","b4","b5","b6"].forEach(i=>fill(i,w2));
+
+function startTest(){
+ if(started) return;
+ started = true;
+ var1.style.display = (variant.value=="1")?"block":"none";
+ var2.style.display = (variant.value=="2")?"block":"none";
+ interval = setInterval(tick,1000);
+}
+
+function tick(){
+ let m=Math.floor(time/60);
+ let s=time%60;
+ timer.innerText = "Время: "+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+ time--;
+ if(time < 0){
+  clearInterval(interval);
+  lockAll();
+  alert("Время вышло");
+ }
+}
+
+function lockAll(){
+ document.querySelectorAll("select,button").forEach(e=>e.disabled=true);
+}
+
+function checkVar1(){
+ if(finished) return;
+ finished=true;
+ document.getElementById("check1").disabled=true;
+ clearInterval(interval);
+ let s=0;
+ if(a1.value=="плазмиды")s+=0.5;
+ if(a2.value=="устойчивости")s+=0.5;
+ if(a3.value=="клонирование")s+=0.5;
+ if(a4.value=="лигазы")s+=0.5;
+ if(a5.value=="молекулярным")s+=0.5;
+ if(a6.value=="естественного")s+=0.5;
+ s1.innerText="Баллы: "+s+" / 3";
+ lockAll();
+}
+
+function checkVar2(){
+ if(finished) return;
+ finished=true;
+ document.getElementById("check2").disabled=true;
+ clearInterval(interval);
+ let s=0;
+ if(b1.value=="плазмид")s+=0.5;
+ if(b2.value=="хромосомной")s+=0.5;
+ if(b3.value=="рестриктазы")s+=0.5;
+ if(b4.value=="клонированием")s+=0.5;
+ if(b5.value=="многоклеточных")s+=0.5;
+ if(b6.value=="терапевтическим")s+=0.5;
+ s2.innerText="Баллы: "+s+" / 3";
+ lockAll();
+}
+
+window.onbeforeunload=function(){return "Ответы будут потеряны";}
+</script>
+</body>
+</html>
